@@ -1,19 +1,21 @@
+//app.js
+
 const express = require("express");
+const serverless = require("serverless-http");
 const app = express();
-const port = 3000;
+const router = express.Router();
+app.use("/", router); 
 
-app.get("/", (req, res) => {
-  res.send("<h1>Good Morning,Omkar<h1>");
+router.get("/", (req, res) => {
+    res.send("App is running..");
 });
 
-app.get("/about", (req, res) => {
-  res.send("<h1>About Page<h1>");
-});
+app.use("/.netlify/functions/app", router);
+module.exports.handler = serverless(app);
 
-app.get("/contact", (req, res) => {
-  res.send("Contact Page");
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}/.netlify/functions/app`);
+    });
+}
